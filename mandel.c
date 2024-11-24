@@ -86,7 +86,8 @@ int main( int argc, char *argv[] )
 
 	// Use fork and create images
 	for(int i = 0; i < children; i++) {
-		if (fork() == 0) {
+		pid_t pid = fork();
+		if (pid == 0) {
 			//find the start increment
 			int start = i * (image_count / children);
 			int end;

@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <sys/wait.h>
 #include "jpegrw.h"
 
 // local routines
@@ -33,11 +34,12 @@ int main( int argc, char *argv[] )
 	int    image_width = 1000;
 	int    image_height = 1000;
 	int    max = 1000;
+	int    children = 10;
 
 	// For each command line argument given,
 	// override the appropriate configuration value.
 
-	while((c = getopt(argc,argv,"x:y:s:W:H:m:o:h"))!=-1) {
+	while((c = getopt(argc,argv,"x:y:s:W:H:m:c:o:h"))!=-1) {
 		switch(c) 
 		{
 			case 'x':
@@ -58,6 +60,9 @@ int main( int argc, char *argv[] )
 			case 'm':
 				max = atoi(optarg);
 				break;
+			case 'c':
+				children = atoi(optarg);
+				break;
 			case 'o':
 				outfile = optarg;
 				break;
@@ -68,26 +73,68 @@ int main( int argc, char *argv[] )
 		}
 	}
 
-	// Calculate y scale based on x scale (settable) and image sizes in X and Y (settable)
-	yscale = xscale / image_width * image_height;
+	int image_count = 50;
+	//scale_step is the input scale over the number of output images
+    double scale_step = xscale / image_count;
 
-	// Display the configuration of the image.
-	printf("mandel: x=%lf y=%lf xscale=%lf yscale=%1f max=%d outfile=%s\n",xcenter,ycenter,xscale,yscale,max,outfile);
+    // Pre-calculate scales so it can be used in the loop
+    double scales[image_count];
+    for (int i = 0; i < image_count; i++) {
+		//gets an equal incrementation for the scale
+        scales[i] = xscale - (i * scale_step);
+    }
 
-	// Create a raw image of the appropriate size.
-	imgRawImage* img = initRawImage(image_width,image_height);
+	// Use fork and create images
+	for(int i = 0; i < children; i++) {
+		if (fork() == 0) {
+			//find the start increment
+			int start = i * (image_count / children);
+			int end;
+			//find the end increment
+			if (i == children - 1) {
+				end = image_count;
+			} else {
+				end = start + (image_count / children);
+			}
 
-	// Fill it with a black
-	setImageCOLOR(img,0);
+			//iterate through the start and end
+			for (int j = start; j < end; j++) {
+				
+				//grab the current scale
+				double scale = scales[j];
+				// Calculate y scale based on x scale (settable) and image sizes in X and Y (settable)
+				yscale = scale / image_width * image_height;
 
-	// Compute the Mandelbrot image
-	compute_image(img,xcenter-xscale/2,xcenter+xscale/2,ycenter-yscale/2,ycenter+yscale/2,max);
+				// Display the configuration of the image.
+				printf("mandel: x=%lf y=%lf xscale=%lf yscale=%1f max=%d outfile=%s\n",xcenter,ycenter,xscale,yscale,max,outfile);
 
-	// Save the image in the stated file.
-	storeJpegImageFile(img,outfile);
+				// Create a raw image of the appropriate size.
+				imgRawImage* img = initRawImage(image_width,image_height);
 
-	// free the mallocs
-	freeRawImage(img);
+				// Fill it with a black
+				setImageCOLOR(img,0);
+
+				// Compute the Mandelbrot image
+				compute_image(img,xcenter-scale/2,xcenter+scale/2,ycenter-yscale/2,ycenter+yscale/2,max);
+
+				// Save the image in the stated file.
+				char name[100] = "";
+				sprintf(name, "%s%d.jpg", outfile, j+1);
+				storeJpegImageFile(img,name);
+
+				// free the mallocs
+				freeRawImage(img);
+			}
+			exit(1);
+		}
+		
+	}
+	
+	//waits for the children to be done
+	int status;
+	for (int i = 0; i < children; i++) {
+		wait(&status);
+	}
 
 	return 0;
 }

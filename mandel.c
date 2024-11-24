@@ -132,11 +132,9 @@ int main( int argc, char *argv[] )
 	}
 	
 	//waits for the children to be done
-	int status;
 	for (int i = 0; i < children; i++) {
-		wait(&status);
+		wait(NULL);
 	}
-
 	return 0;
 }
 

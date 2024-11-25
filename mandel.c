@@ -89,14 +89,10 @@ int main( int argc, char *argv[] )
 		pid_t pid = fork();
 		if (pid == 0) {
 			//find the start increment
-			int start = i * (image_count / children);
-			int end;
+			int start = (i * image_count) / children;
 			//find the end increment
-			if (i == children - 1) {
-				end = image_count;
-			} else {
-				end = start + (image_count / children);
-			}
+        	int end = ((i + 1) * image_count) / children;
+			
 
 			//iterate through the start and end
 			for (int j = start; j < end; j++) {

@@ -10,6 +10,5 @@ For my implementation, I let the number of children processes be command line ar
 
 ## Discussion
 
-The graph contains the time the program took to complete for 1, 2, 5, 10, and 20 children processes. As one can see from the graph, as the processes increased from 1-10, the time decreased drastically. However, there is a certain point where with more children the time starts to increase again, which is shown by how the time increases with 20 children. This is likely because there is a point where the number of children becomes redundant, and including too many children is useless and just takes the program longer. This means that when using multiprocessing, there is a number of processes that makes the time the lowest, which means finding that number is essential for the most efficient program.
-
+The graph contains the time the program took to complete for 1, 2, 5, 10, and 20 children processes. As one can see from the graph, as the processes increased from 1-20, the time decreased drastically. When more processes are used, the time decreases. For 1 child, the time is around 151 seconds, however 20 cihldren decreases the time to around 17 seconds.
 

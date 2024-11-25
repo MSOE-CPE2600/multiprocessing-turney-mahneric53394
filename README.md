@@ -6,7 +6,7 @@ For my implementation, I let the number of children processes be command line ar
 
 ## Graph
 
-[Link to Graph](https://github.com/MSOE-CPE2600/multiprocessing-turney-mahneric53394/blob/labWeek11dev/graph.png)
+[Link to Graph](https://github.com/MSOE-CPE2600/multiprocessing-turney-mahneric53394/blob/main/graph.png)
 
 ## Discussion
 

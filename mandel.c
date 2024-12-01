@@ -1,3 +1,12 @@
+/**********************************************************
+* Lab 12
+* Filename: mandel.c
+* Description: Creates 50 mandel images using
+* multi-processing and multi-threading
+* Author: Eric Mahn
+* Date: 11/30/24
+* Compile Instructions: make 
+***********************************************************/
 /// 
 //  mandel.c
 //  Based on example code found here:
@@ -6,6 +15,7 @@
 //  Converted to use jpg instead of BMP and other minor changes
 //  
 ///
+#include <pthread.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>

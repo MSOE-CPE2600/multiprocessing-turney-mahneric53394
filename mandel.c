@@ -1,6 +1,7 @@
 /**********************************************************
 * Lab 12
 * Filename: mandel.c
+* Section: 121
 * Description: Creates 50 mandel images using
 * multi-processing and multi-threading
 * Author: Eric Mahn
